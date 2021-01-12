@@ -57,7 +57,7 @@ public class HomeController {
             try {
                 int fileId = fileService.saveFile(file, user.getUserid());
                 model.addAttribute("isSuccess", fileId > 0);
-            } catch (IOException exception) {
+            } catch (Exception exception) {
                 String errorPrompt = "Could not upload file " + file.getOriginalFilename() + "Reason: "+exception.getMessage();
                 model.addAttribute("isSuccess", false);
                 model.addAttribute("errorMessage", errorPrompt);

@@ -27,18 +27,18 @@ public class SignupController {
 
     @PostMapping
     public String registerUser(@ModelAttribute User user, Model model){
-        //String resultPage;
+        String resultPage;
         if (userService.isExistingUser(user.getUsername())) {
             model.addAttribute("showError", true);
             model.addAttribute("errorMessage", "User already exists");
-            //resultPage = "signup";
+            resultPage = "signup";
         } else  {
             Integer id = userService.createUser(user);
             model.addAttribute("signupSuccessful", id > 0);
             model.addAttribute("showError", id < 0);
             model.addAttribute("errorMessage", "Signup failed. Please retry.");
-            //resultPage = id > 0 ? "login" : "signup";
+            resultPage = id > 0 ? "login" : "signup";
         }
-        return "signup";
+        return resultPage;
     }
 }
