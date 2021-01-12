@@ -53,20 +53,35 @@ public class HomeController {
 
     @PostMapping("/files")
     public String uploadFile(@RequestParam("fileUpload") MultipartFile file, Model model) {
-        if (user != null) {
-            try {
-                int fileId = fileService.saveFile(file, user.getUserid());
-                model.addAttribute("isSuccess", fileId > 0);
-            } catch (Exception exception) {
-                String errorPrompt = "Could not upload file " + file.getOriginalFilename() + "Reason: "+exception.getMessage();
-                model.addAttribute("isSuccess", false);
-                model.addAttribute("errorMessage", errorPrompt);
+        if (user == null) {
+            updateResultScreen(model, false, "You are not logged in");
+            return "result";
+        }
+        try {
+            if (file.getOriginalFilename() == null || file.getOriginalFilename().isEmpty()) {
+                updateResultScreen(model, false, "Please select a file!");
+                return "result";
             }
-        } else {
-            model.addAttribute("isSuccess", false);
-            model.addAttribute("errorMessage", "You are not logged in");
+
+            //check if file has already been uploaded by the current user. Return error if it does.
+            if (fileService.isDuplicateUserFile(user.getUserid(), file.getOriginalFilename())) {
+                updateResultScreen(model, false, "File already exists");
+                return "result";
+            }
+
+            //File passed all checks. Time to save to db.
+            int fileId = fileService.saveFile(file, user.getUserid());
+            updateResultScreen(model, fileId > 0, "File upload failed. Something went wrong");
+        } catch (Exception exception) {
+            String errorPrompt = "Could not upload file " + file.getOriginalFilename() + "Reason: "+exception.getMessage();
+            updateResultScreen(model,false, errorPrompt);
         }
         return "result";
+    }
+
+    private void updateResultScreen(Model model, boolean isSuccessful, String errorMessage){
+        model.addAttribute("isSuccess", isSuccessful);
+        model.addAttribute("errorMessage", errorMessage);
     }
 
     @GetMapping("/files/{fileId}")

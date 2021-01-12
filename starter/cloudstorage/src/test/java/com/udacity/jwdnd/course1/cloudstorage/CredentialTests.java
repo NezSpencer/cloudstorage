@@ -146,6 +146,7 @@ public class CredentialTests {
         String newUrl = "http://google.com";
         Thread.sleep(2000);
         credentialDialogPage.editUsernameAndUrl(newUsername, newUrl);
+        Thread.sleep(2000);
         new WebDriverWait(driver, 5).until(ExpectedConditions.elementToBeClickable(By.id("goHome"))).click();
         Thread.sleep(2000);
         String savedUrl = credentialDialogPage.getItemUrl();

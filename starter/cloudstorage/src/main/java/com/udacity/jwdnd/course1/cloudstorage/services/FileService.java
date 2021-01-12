@@ -30,6 +30,10 @@ public class FileService {
         return filesMapper.getFileById(fileId);
     }
 
+    public boolean isDuplicateUserFile(int userId, String filename) {
+        return filesMapper.getUserFileByName(userId, filename) != null;
+    }
+
     public int deleteFile(int fileId) {
         return filesMapper.deleteFile(fileId);
     }
